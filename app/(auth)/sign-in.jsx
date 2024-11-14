@@ -1,76 +1,75 @@
+import { View, Text, Image, ScrollView, ImageBackground, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Image, ScrollView, Dimensions } from 'react-native';
-import { Link } from 'expo-router';
-import { images } from '../../constants'; 
-import icons from '../../constants/icons'; 
-
-const { width } = Dimensions.get('window'); 
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { images } from '../../constants';
+import FormField from '../../components/FormField';
+import CustomButton from '../../components/CustomButton';
+import { Link, useRouter } from 'expo-router';
 
 const SignIn = () => {
-  const [email, setEmail] = useState('');  
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+  const [form, setForm] = useState({
+    email: '',
+    password: '',
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleLogin = () => {
-    console.log('Email:', email);
-    console.log('Password:', password);
+  const submit = () => {
+    setIsSubmitting(true);
+
+    setTimeout(() => {
+      setIsSubmitting(false);
+      router.push('/home'); 
+    }, 2000); 
   };
 
   return (
     <ImageBackground
       source={{ uri: 'https://i.pinimg.com/564x/30/c2/60/30c26037241df9d7fd1631bebf69bf3f.jpg' }}
       style={styles.background}
+      blurRadius={1} 
     >
-      <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-        <Image 
-          source={images.Textlogo} 
-          resizeMode="contain"
-          style={styles.logo}
-        />
-        
-        <View style={styles.container}>
-          <TextInput
-            style={styles.input}
-            placeholder="Username"
-            placeholderTextColor="#aaa"
-            value={email}
-            onChangeText={setEmail}
-          />
-
-          <View style={styles.passwordContainer}>
-            <TextInput
-              style={styles.passwordInput}
-              placeholder="Password"
-              placeholderTextColor="#aaa"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry={!showPassword} 
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView contentContainerStyle={styles.scrollView}>
+          <View style={styles.container}>
+            <Image
+              source={images.Textlogo}
+              style={styles.logo}
+              resizeMode="contain"
             />
-            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-              <Image
-                source={showPassword ? icons.eye : icons.hide_eye} 
-                style={styles.eyeIcon}
-              />
-            </TouchableOpacity>
+            <Text style={styles.headerText}>
+              Log in Here
+            </Text>
+            <FormField
+              title="Username"
+              value={form.email}
+              handleChangeText={(e) => setForm({ ...form, email: e })}
+              otherStyles={styles.field}
+              keyboardType="email-address"
+            />
+            <FormField
+              title="Password"
+              value={form.password}
+              handleChangeText={(e) => setForm({ ...form, password: e })}
+              otherStyles={styles.field}
+            />
+            <CustomButton
+              title="Sign In"
+              handlePress={submit}
+              containerStyles={styles.button}
+              isLoading={isSubmitting}
+            />
+            <View style={styles.signupContainer}>
+              <Text style={styles.signupText}>
+                Don't have an account?
+              </Text>
+              <Link href="/sign-up" style={styles.signupLink}>
+                Signup
+              </Link>
+            </View>
           </View>
-
-          <Link href="/home" asChild>
-            <TouchableOpacity onPress={handleLogin} style={styles.button}>
-              <Text style={styles.buttonText}>Sign In</Text>
-            </TouchableOpacity>
-          </Link>
-
-          <Link href="/sign-up" asChild>
-            <TouchableOpacity style={styles.button}>
-              <Text style={styles.buttonText}>Create Account</Text>
-            </TouchableOpacity>
-          </Link>
-
-          <TouchableOpacity>
-            <Text style={styles.forgotPassword}>Forgot password?</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </SafeAreaView>
     </ImageBackground>
   );
 };
@@ -78,83 +77,55 @@ const SignIn = () => {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    resizeMode: 'cover',
-  },
-  scrollContainer: {
-    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    width: '100%',
+    height: '100%',
+  },
+  scrollView: {
+    flexGrow: 1,
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    marginVertical: 24,
   },
   logo: {
+    width: 400,
+    height: 450,
     marginTop: -200,
-    marginBottom: -60, 
+    marginBottom: -160,
   },
-  container: { 
-    borderRadius: 15,
-    padding: 20,
-    width: '100%', 
-    alignItems: 'center',
-  },
-  input: {
-    width: '100%',
-    padding: 10,
-    marginVertical: 15,
-    borderRadius: 15,
-    backgroundColor: '#000',
-    color: 'white',
-    borderColor: '#ddd', 
-    borderWidth: 1,
-    shadowColor: '#00ffff', 
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 10,
-    elevation: 8, 
-  },
-  passwordContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-    backgroundColor: '#000',
-    borderRadius: 15,
-    marginVertical: 10,
-    borderColor: '#ddd', 
-    borderWidth: 1,
-    shadowColor: '#00ffff',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 10, 
-    elevation: 8, 
-  },
-  passwordInput: {
-    flex: 1,
-    padding: 10,
-    color: 'white',
-  },
-  eyeIcon: {
-    width: 20,
-    height: 20,
-    marginRight: 10,
-    tintColor: '#aaa',
+  headerText: {
+    fontSize: 24,
+    color: '#FFFFFF',
+    fontFamily: 'RleyR',
+    marginTop: 16,
+    textAlign: 'center',
+    marginBottom: 20,
   },
   button: {
-    width: '90%',
-    padding: 10,
-    marginTop: 10,
-    borderRadius: 60,
-    backgroundColor: '#555',
+    width: '100%',
+    marginTop: 28,
+  },
+  signupContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
+    marginTop: 20,
   },
-  buttonText: {
-    color: 'white',
+  signupText: {
     fontSize: 16,
+    color: '#D1D5DB',
+    fontFamily: 'RleyI',
   },
-  forgotPassword: {
-    color: '#fff',
-    textAlign: 'center',
-    marginTop: 150,
+  signupLink: {
+    fontSize: 16,
+    color: '#1E90FF',
+    fontFamily: 'RleyR',
+    marginLeft: 8,
   },
 });
-
-
 
 export default SignIn;

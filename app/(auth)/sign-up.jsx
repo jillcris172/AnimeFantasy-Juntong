@@ -1,169 +1,172 @@
+import { View, Text, Image, ScrollView, ImageBackground, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Image, ScrollView } from 'react-native';
-import { Link } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { images } from '../../constants';
-import icons from '../../constants/icons';
+import FormField from '../../components/FormField';
+import CustomButton from '../../components/CustomButton';
+import { Link, useRouter } from 'expo-router';
 
 const SignUp = () => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+  const [form, setForm] = useState({
+    firstname: '',
+    lastname: '',
+    emailusername: '',
+    createpassword: '',
+    confirmpassword: '',
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSignUp = () => {
-    console.log('Sign Up with:', firstName, lastName, username, password, confirmPassword);
+  const submit = () => {
+    if (form.createpassword !== form.confirmpassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError('');
+
+    setTimeout(() => {
+      setIsSubmitting(false);
+      router.push('/sign-in');
+    }, 2000);
   };
 
   return (
     <ImageBackground
       source={{ uri: 'https://i.pinimg.com/564x/30/c2/60/30c26037241df9d7fd1631bebf69bf3f.jpg' }}
       style={styles.background}
+      blurRadius={1}
     >
-      <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-        <View style={styles.container}>
-          <Text style={styles.title}>Create Account</Text>
-
-          <TextInput
-            style={styles.input}
-            placeholder="First Name"
-            placeholderTextColor="#aaa"
-            value={firstName}
-            onChangeText={setFirstName}
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Last Name"
-            placeholderTextColor="#aaa"
-            value={lastName}
-            onChangeText={setLastName}
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Username"
-            placeholderTextColor="#aaa"
-            value={username}
-            onChangeText={setUsername}
-          />
-
-          <View style={styles.passwordContainer}>
-            <TextInput
-              style={styles.passwordInput}
-              placeholder="Password"
-              placeholderTextColor="#aaa"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry={!showPassword}
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView contentContainerStyle={styles.scrollView}>
+          <View style={styles.container}>
+            <Image 
+              source={images.Textlogo}
+              resizeMode="contain"
+              style={styles.logo}
             />
-            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-              <Image
-                source={showPassword ? icons.eye : icons.hide_eye}
-                style={styles.eyeIcon}
-              />
-            </TouchableOpacity>
-          </View>
+            <Text style={styles.headerText}>Sign up Here</Text>
 
-          <View style={styles.passwordContainer}>
-            <TextInput
-              style={styles.passwordInput}
-              placeholder="Confirm Password"
-              placeholderTextColor="#aaa"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              secureTextEntry={!showPassword} 
+            <FormField
+              title="Firstname"
+              value={form.firstname}
+              handleChangeText={(e) => setForm({ ...form, firstname: e })}
+              otherStyles={styles.field}
             />
-          </View>
+            <FormField
+              title="Lastname"
+              value={form.lastname}
+              handleChangeText={(e) => setForm({ ...form, lastname: e })}
+              otherStyles={styles.field}
+            />
+            <FormField
+              title="Create Username"
+              value={form.emailusername}
+              handleChangeText={(e) => setForm({ ...form, emailusername: e })}
+              otherStyles={styles.field}
+              keyboardType="email-address"
+            />
+            <FormField
+              title="Password"
+              value={form.createpassword}
+              handleChangeText={(e) => setForm({ ...form, createpassword: e })}
+              otherStyles={styles.field}
+              
+            />
+            <FormField
+              title="Confirm Password"
+              value={form.confirmpassword}
+              handleChangeText={(e) => setForm({ ...form, confirmpassword: e })}
+              otherStyles={styles.field}
+              
+            />
 
-          <Link href="/sign-in" asChild>
-            <TouchableOpacity onPress={handleSignUp} style={styles.button}>
-              <Text style={styles.buttonText}>Sign Up</Text>
-            </TouchableOpacity>
-          </Link>
-        </View>
-      </ScrollView>
+            {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+            <CustomButton
+              title="Done"
+              handlePress={submit}
+              containerStyles={styles.button}
+              isLoading={isSubmitting}
+            />
+
+            <View style={styles.signupContainer}>
+              <Text style={styles.signupText}>You already have an account?</Text>
+              <Link href="/sign-in" style={styles.signupLink}>
+                Sign In
+              </Link>
+            </View>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-    background: {
-      flex: 1,
-      resizeMode: 'cover',
-    },
-    scrollContainer: {
-      flexGrow: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    container: {
-      borderRadius: 15,
-      padding: 20,
-      width: '100%',
-      alignItems: 'center',
-    },
-    title: {
-      fontSize: 24,
-      marginBottom: 100,
-      color: '#fff',
-      fontFamily: 'SOR',
-    },
-    input: {
-      width: '100%',
-      padding: 10,
-      marginVertical: 10,
-      borderRadius: 15,
-      backgroundColor: '#000',
-      color: 'white',
-      borderColor: '#ddd', 
-      borderWidth: 1,
-      shadowColor: '#00ffff', 
-      shadowOffset: { width: 0, height: 0 },
-      shadowOpacity: 0.8,
-      shadowRadius: 10,
-      elevation: 8, 
-    },
-    passwordContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      width: '100%',
-      backgroundColor: '#000',
-      borderRadius: 15,
-      marginVertical: 10,
-      borderColor: '#ddd', 
-      borderWidth: 1,
-      shadowColor: '#00ffff', 
-      shadowOffset: { width: 0, height: 0 },
-      shadowOpacity: 0.8,
-      shadowRadius: 10,
-      elevation: 8, 
-    },
-    passwordInput: {
-      flex: 1,
-      padding: 10,
-      color: 'white',
-    },
-    eyeIcon: {
-      width: 20,
-      height: 20,
-      marginRight: 10,
-      tintColor: '#aaa',
-    },
-    button: {
-      width: '90  %',
-      padding: 15,
-      borderRadius: 60,
-      backgroundColor: '#555',
-      alignItems: 'center',
-      marginTop: 20,
-    },
-    buttonText: {
-      color: 'white',
-      fontSize: 16,
-    },
-  });
-  
-  export default SignUp;
-  
+  background: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+  },
+  safeArea: {
+    flex: 1,
+  },
+  scrollView: {
+    flexGrow: 1,
+    justifyContent: 'center',
+  },
+  container: {
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    marginVertical: 24,
+  },
+  logo: {
+    width: 300,
+    height: 450,
+    marginTop: -210,
+    marginBottom: -190,
+  },
+  headerText: {
+    fontSize: 24,
+    color: '#FFFFFF',
+    fontFamily: 'RleyR',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  field: {
+    marginBottom: 16,
+  },
+  button: {
+    width: '100%',
+    marginTop: 28,
+  },
+  errorText: {
+    color: '#FF0000',
+    fontSize: 14,
+    marginTop: 8,
+    textAlign: 'center',
+  },
+  signupContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  signupText: {
+    fontSize: 16,
+    color: '#D1D5DB',
+    fontFamily: 'RleyI',
+  },
+  signupLink: {
+    fontSize: 16,
+    color: '#1E90FF',
+    fontFamily: 'RleyR',
+    marginLeft: 5,
+  },
+});
+
+export default SignUp;
