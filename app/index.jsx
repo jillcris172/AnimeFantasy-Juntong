@@ -1,94 +1,119 @@
-import { StyleSheet, Text, View, Image } from 'react-native'; 
-import { router } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { ScrollView, Text, View, Image, StyleSheet } from 'react-native';
+import { Link, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import CustomButton from '../components/CustomButton';
-import { ScrollView } from 'react-native';
 import { images } from '../constants';
+import CustomButton from '../components/CustomButton';
 
 export default function App() {
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Image 
-          source={{ uri: 'https://i.pinimg.com/564x/30/c2/60/30c26037241df9d7fd1631bebf69bf3f.jpg' }} 
+      <ScrollView contentContainerStyle={styles.scrollView}>
+      
+        <Image
+          source={{ uri: 'https://i.pinimg.com/564x/30/c2/60/30c26037241df9d7fd1631bebf69bf3f.jpg' }}
           style={styles.backgroundImage}
         />
-        <View style={styles.logoContainer}>
-          <Image 
-            source={images.logo}
-            style={styles.logo} 
-          />
-          <Image 
-            source={images.Textlogo}
-            style={styles.textLogo} 
-          />
-        </View>
-        <View style={styles.descriptionContainer}>
-          <Text style={styles.descriptionText}>
+
+        <View style={styles.container}>
+       
+          <View style={styles.logoContainer}>
+            <Image
+              source={images.Textlogo}
+              style={styles.textLogo}
+            />
+            <Image
+              source={images.logo}
+              style={styles.logo}
+            />
+          </View>
+
+          <View style={styles.titleContainer}>
+            <Text style={styles.titleText}>
             Anime Fantasy: Created for those who live and breathe anime. Dive into a world of unforgettable stories, bookmark favorites, and find your next obsession.
-          </Text>
+            </Text>
+          </View>
         </View>
+        
+       
         <View style={styles.buttonContainer}>
           <CustomButton
-            title="Go to App"
+            title="Get Started"
             handlePress={() => router.push('/sign-in')}
+            containerStyles={{ width: '100%', marginTop: 28 }}
           />
         </View>
+
       </ScrollView>
+      <StatusBar backgroundColor="#161622" style="light" />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   safeArea: {
-    flex: 1, 
-    backgroundColor: 'primary',
-    height: '100%',
+    flex: 1,
+    backgroundColor: '#161622',
   },
-  scrollContainer: {
-    flexGrow: 1, 
-    justifyContent: 'center', 
+  scrollView: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  backgroundImage: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',  
-  },
-  logoContainer: {
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    marginTop: 60, 
-  },
-  logo: {
-    width: 150, 
-    height: 75, 
-    marginRight: -100, 
-  },
-  textLogo: {
-    width: 180, 
-    height: 60, 
-  },
-  descriptionContainer: {
+  container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center', 
-    marginBottom: 20, 
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    position: 'relative',
+    zIndex: 1, 
   },
-  descriptionText: {
-    fontSize: 16,
-    color: '#fff',
-    textAlign: 'center',
-    paddingHorizontal: 20,
+  backgroundImage: {
+    position: 'absolute', 
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+    zIndex: 0, 
+  },
+  logoContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textLogo: {
+    width: 400,
+    height: 350,
+    resizeMode: 'contain',
+    marginTop: -120,
+  },
+  logo: {
+    width: 250,
+    height: 200,
+    resizeMode: 'contain',
+    marginTop: -200,
+    marginBottom: 20,
+  },
+  titleContainer: {
+    justifyContent:'center',
+  },
+  titleText: {
+    fontSize: 24,
+    color: '#FFFFFF',
     fontFamily: 'RleyI',
+    textAlign: 'center',
+    marginBottom: 140,
+  },
+  subtitleText: {
+    fontSize: 14,
+    color: '#D1D5DB',
+    fontFamily: 'RleyR',
+    textAlign: 'center',
+    marginTop: 100,
+    marginBottom: -250,
   },
   buttonContainer: {
     alignItems: 'center',
-    marginBottom: 50,
+    justifyContent: 'flex-end', 
+    marginTop: 'auto', 
+    marginBottom: 40, 
   },
 });
